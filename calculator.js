@@ -7,6 +7,7 @@ function initLayout() {
                     ['.',0, '=', '+']];
     const operators = "/+-*=".split('');
     const undoOperators = "AC DEL".split(' ');
+
     let keypad = document.createElement("div"); // Wrapper for btn-rows
     keypad.className = "calc-keypad"
     layout.forEach((row) => {
@@ -26,7 +27,21 @@ function initLayout() {
                 return
             }
             if (undoOperators.includes(btn)) {
-                button.classList.add("undo-btn");
+                if (btn === "AC") {
+                    button.classList.add("undo-btn");  
+                    button.addEventListener('click', (_) => {
+                        calculatorState.onAllClear();
+                        updateDisplay(" ");
+                    })
+                }
+
+                else if(btn === 'DEL') {
+                    button.addEventListener('click', (_) => {
+                        calculatorState.onDelete();
+                        updateDisplay(" ");
+                    })
+                }
+
                 return;
             }
             if (operators.includes(btn)) {
@@ -118,6 +133,14 @@ class Calculator {
         return this.#rightOperand;
     }
 
+    /**
+     *  Resets the calculator state to null
+     */
+    onAllClear() {
+        this.#leftOperand = null;
+        this.#rightOperand = null;
+        this.#operator = null;
+    }
     /**
      * Evaluates the current expression using the stored left operand,
      * right operand, and operator.
