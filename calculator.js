@@ -51,7 +51,7 @@ export class Calculator {
      */
     onNumericBtnPress(number) {
         console.log(number);
-        const hasDecimalAlready = (operand) => number.includes('.') && operand.includes(number);
+        const hasDecimalAlready = (operand) => number === '.' && operand.includes('.');
         const concatNumberToOperand = (operand) => operand.concat(number);
 
         if (this.#operator === "") {
