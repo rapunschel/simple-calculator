@@ -8,6 +8,36 @@ function initLayout() {
     const operators = "/+-*=".split('');
     const undoOperators = "AC DEL".split(' ');
 
+    const onButtonPresses = {
+        onACPress : (_) => {
+            calculatorState.onAllClear();
+            updateDisplay(" ");
+        },
+
+        onDELPress: (_) => {
+                        
+            updateDisplay(calculatorState.onDelete());
+        },
+
+        onOperatorPress: (event) => {
+            const operator = event.target.textContent;
+            if (operator === '=') {
+                updateDisplay(calculatorState.onEvaluate());
+                return;
+            }
+            
+            const value = calculatorState.onOperator(event.target.textContent);
+            typeof value === 'string' ? updateDisplay(value) : updateDisplay(" ")
+
+        },
+
+        onNumericPress: (event) => {
+            updateDisplay(calculatorState.onNumericBtnPress(event.target.textContent));
+        }
+
+    }
+
+
     let keypad = document.createElement("div"); // Wrapper for btn-rows
     keypad.className = "calc-keypad"
     layout.forEach((row) => {
@@ -29,17 +59,11 @@ function initLayout() {
             if (undoOperators.includes(btn)) {
                 if (btn === "AC") {
                     button.classList.add("undo-btn");  
-                    button.addEventListener('click', (_) => {
-                        calculatorState.onAllClear();
-                        updateDisplay(" ");
-                    })
+                    button.addEventListener('click', onButtonPresses.onACPress)
                 }
 
                 else if(btn === 'DEL') {
-                    button.addEventListener('click', (_) => {
-                        calculatorState.onDelete();
-                        updateDisplay(" ");
-                    })
+                    button.addEventListener('click', onButtonPresses.onDELPress)
                 }
 
                 return;
@@ -47,23 +71,11 @@ function initLayout() {
             if (operators.includes(btn)) {
                 button.classList.add("op-btn");
 
-                button.addEventListener('click', (event) => {
-                    const operator = event.target.textContent;
-                    if (operator === '=') {
-                        updateDisplay(calculatorState.onEvaluate());
-                        return;
-                    }
-                    if (calculatorState.onOperator(event.target.textContent)) {
-                        updateDisplay(" ") // Empty the display for entering right operand.
-                    }
-
-                })
+                button.addEventListener('click', onButtonPresses.onOperatorPress)
                 return;
             }
             button.classList.add("num-btn");
-            button.addEventListener('click', (event) => {
-                updateDisplay(calculatorState.onNumericBtnPress(event.target.textContent));
-            })
+            button.addEventListener('click', onButtonPresses.onNumericPress)
         })
     })
     calculator.appendChild(keypad);
@@ -71,7 +83,7 @@ function initLayout() {
 }
 
 function updateDisplay(value) {
-    if (!value) return;
+    if (!value && value !== "") return;
     const display = document.querySelector(".display");
     display.textContent = value;
 }
@@ -95,15 +107,25 @@ class Calculator {
 
 
     /**
-     * Handles operator button press input.
-     * Sets the operator if the left operand is already defined.
-     * 
-     * @param {string} operator - The operator pressed (e.g. "+", "-", "*", "/").
-     * @returns {boolean} Returns true if operator was set successfully,
-     *                    or false if left operand is not yet defined (operator ignored).
+     * - If the left operand is empty, dovnothing and returns false.
+     * - If both an operator and right operand already exist, it evaluates the current expression,
+     *   sets the new operator, and returns the result.
+     * - Otherwise, just sets the operator and returns true.
+     *
+     * @param {string} operator - The operator pressed ('+', '-', '*', '/').
+     * @returns {boolean|string} False if no action is taken, true if the operator is simply set,
+     *                           or the result of evaluation if an expression was completed.
      */
     onOperator(operator) {
         if (this.#leftOperand === "") return  false// Do nothing if empty
+
+        
+        if (this.operator !== "" && this.#rightOperand !== "") { // evaluate expr
+            const result = this.onEvaluate();
+            this.#operator = operator;
+            return result;
+        }
+
         this.#operator = operator;
         return true;
     }
@@ -133,6 +155,27 @@ class Calculator {
         return this.#rightOperand;
     }
 
+
+    /**
+     * Deletes the last character from the current operand.
+     * 
+     * If no operator is set (empty string), deletes from the left operand.
+     * Otherwise, deletes from the right operand.
+     * 
+     * @returns {string} The updated operand after deletion.
+     */
+    onDelete() {
+        console.log(this.#operator);
+        const removeLastChar = (operand) => operand.slice(0, -1);
+        if (this.#operator === "") {
+            this.#leftOperand = removeLastChar(this.#leftOperand);
+            return this.#leftOperand;
+        } 
+
+        this.#rightOperand = removeLastChar(this.#rightOperand);
+        return this.#rightOperand;
+    }
+
     /**
      *  Resets the calculator state to null
      */
@@ -148,7 +191,7 @@ class Calculator {
      * Returns the result of the operation if all required values are present,
      * otherwise returns false.
      * 
-     * After evaluation, resets the right operand and operator to null.
+     * After evaluation, resets the right operand and operator.
      * 
      * Left operand becomes the result.
      * 
