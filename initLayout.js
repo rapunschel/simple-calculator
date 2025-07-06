@@ -45,7 +45,7 @@ function initLayout() {
         },
 
         onNumericPress: (event) => {
-            calculatorState.onNumericBtnPress(event.target.textContent)
+            calculatorState.onNumeric(event.target.textContent)
             updateDisplay();
         }
 

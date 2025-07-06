@@ -39,7 +39,7 @@ export class Calculator {
      * depending on whether an operator has been set.
      * Prevents multiple decimal points in a single operand.
      */
-    onNumericBtnPress(number) {
+    onNumeric(number) {
         const hasDecimalAlready = (operand) => number === '.' && operand.includes('.');
         const concatNumberToOperand = (operand) => operand.concat(number);
 
