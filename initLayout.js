@@ -16,17 +16,17 @@ function initLayout() {
         const customEvent = {target: {textContent: key}}
         if (numericalValues.includes(key)) onButtonPresses.onNumericPress(customEvent);
         else if (operators.includes(key))  onButtonPresses.onOperatorPress(customEvent);
-        else if (key === "Backspace")      onButtonPresses.onDELPress(_);
+        else if (key === "Backspace")      onButtonPresses.onDELPress(customEvent);
     })
 
     
     const onButtonPresses = {
-        onACPress : (_) => {
+        onACPress : (event) => {
             calculatorState.onAllClear();
             updateDisplay();
         },
 
-        onDELPress: (_) => {
+        onDELPress: (event) => {
             calculatorState.onDelete() 
             updateDisplay();
         },
