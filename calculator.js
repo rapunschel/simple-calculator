@@ -83,9 +83,9 @@ class Calculator {
     #funcs;
 
     constructor() {
-        this.#leftOperand = null;
-        this.#rightOperand = null;
-        this.#operator = null;
+        this.#leftOperand = "";
+        this.#rightOperand = "";
+        this.#operator = "";
         this.#funcs = {'+' :(x,y) => x+y,
                     '-': (x,y) => x-y,
                     '/': (x,y) => x/y,
@@ -103,7 +103,7 @@ class Calculator {
      *                    or false if left operand is not yet defined (operator ignored).
      */
     onOperator(operator) {
-        if (this.#leftOperand === null) return  false// Do nothing
+        if (this.#leftOperand === "") return  false// Do nothing if empty
         this.#operator = operator;
         return true;
     }
@@ -119,10 +119,10 @@ class Calculator {
      */
     onNumericBtnPress(number) {
         console.log(number);
-        const hasDecimalAlready = (operand) => operand !== null && number.includes('.') && operand.includes(number);
-        const concatNumberToOperand = (operand) => operand === null ? "".concat(number) : operand.concat(number);
+        const hasDecimalAlready = (operand) => number.includes('.') && operand.includes(number);
+        const concatNumberToOperand = (operand) => operand.concat(number);
 
-        if (this.#operator === null) {
+        if (this.#operator === "") {
             if (hasDecimalAlready(this.#leftOperand)) return false;
             this.#leftOperand = concatNumberToOperand(this.#leftOperand);
             return this.#leftOperand;
@@ -137,9 +137,9 @@ class Calculator {
      *  Resets the calculator state to null
      */
     onAllClear() {
-        this.#leftOperand = null;
-        this.#rightOperand = null;
-        this.#operator = null;
+        this.#leftOperand = "";
+        this.#rightOperand = "";
+        this.#operator = "";
     }
     /**
      * Evaluates the current expression using the stored left operand,
@@ -156,16 +156,16 @@ class Calculator {
      *                        could not be performed due to missing operands/operator.
      */
     onEvaluate() {
-        if (this.#leftOperand  === null ||
-            this.#rightOperand === null ||
-            this.#operator === null
+        if (this.#leftOperand  === "" ||
+            this.#rightOperand === "" ||
+            this.#operator === ""
         ) return false;
 
         const rawResult = this.#funcs[this.#operator](parseFloat(this.#leftOperand), parseFloat(this.#rightOperand));
         const result = Number.isInteger(rawResult) ? rawResult.toString() : rawResult.toFixed(2);
         this.#leftOperand = result;
-        this.#rightOperand = null;
-        this.#operator = null;
+        this.#rightOperand = "";
+        this.#operator = "";
         return result;
     }
 }
