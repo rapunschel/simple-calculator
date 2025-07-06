@@ -27,9 +27,7 @@ body {
 }
 
 .display {
-    display:flex;
-    justify-content: flex-end;
-    align-items:end;
+
     width: 300px;
     height: 150px;
     background-color: rgb(77, 92, 76);
@@ -37,6 +35,10 @@ body {
     padding: 0 8px;
     font-size: 3rem;
     font-weight: bold;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    overflow-y: auto;
+    max-width: 100%;
 }
 
 .calc-row {
