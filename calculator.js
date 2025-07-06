@@ -68,9 +68,6 @@ export class Calculator {
         this.#rightOperand = removeLastChar(this.#rightOperand);
     }
 
-    /**
-     *  Resets the calculator state to empty strings
-     */
     onAllClear() {
         this.#leftOperand = "";
         this.#rightOperand = "";
