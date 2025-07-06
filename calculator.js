@@ -37,8 +37,8 @@ function initLayout() {
 
                 else if(btn === 'DEL') {
                     button.addEventListener('click', (_) => {
-                        calculatorState.onDelete();
-                        updateDisplay(" ");
+                        
+                        updateDisplay(calculatorState.onDelete());
                     })
                 }
 
@@ -71,7 +71,7 @@ function initLayout() {
 }
 
 function updateDisplay(value) {
-    if (!value) return;
+    if (!value && value !== "") return;
     const display = document.querySelector(".display");
     display.textContent = value;
 }
@@ -133,6 +133,27 @@ class Calculator {
         return this.#rightOperand;
     }
 
+
+    /**
+     * Deletes the last character from the current operand.
+     * 
+     * If no operator is set (empty string), deletes from the left operand.
+     * Otherwise, deletes from the right operand.
+     * 
+     * @returns {string} The updated operand after deletion.
+     */
+    onDelete() {
+        console.log(this.#operator);
+        const removeLastChar = (operand) => operand.slice(0, -1);
+        if (this.#operator === "") {
+            this.#leftOperand = removeLastChar(this.#leftOperand);
+            return this.#leftOperand;
+        } 
+
+        this.#rightOperand = removeLastChar(this.#rightOperand);
+        return this.#rightOperand;
+    }
+
     /**
      *  Resets the calculator state to null
      */
@@ -148,7 +169,7 @@ class Calculator {
      * Returns the result of the operation if all required values are present,
      * otherwise returns false.
      * 
-     * After evaluation, resets the right operand and operator to null.
+     * After evaluation, resets the right operand and operator.
      * 
      * Left operand becomes the result.
      * 
