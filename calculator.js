@@ -35,19 +35,19 @@ function initLayout() {
                 button.addEventListener('click', (event) => {
                     const operator = event.target.textContent;
                     if (operator === '=') {
-                        // TODO update display if result
-                        console.log("evaluating")
-                        calculatorState.onEvaluate();
+                        updateDisplay(calculatorState.onEvaluate());
                         return;
                     }
-                    calculatorState.onOperator(event.target.textContent)
+                    if (calculatorState.onOperator(event.target.textContent)) {
+                        updateDisplay(" ") // Empty the display for entering right operand.
+                    }
 
                 })
                 return;
             }
             button.classList.add("num-btn");
             button.addEventListener('click', (event) => {
-                calculatorState.onNumericBtnPress(event.target.textContent);
+                updateDisplay(calculatorState.onNumericBtnPress(event.target.textContent));
             })
         })
     })
@@ -90,7 +90,6 @@ class Calculator {
     onOperator(operator) {
         if (this.#leftOperand === null) return  false// Do nothing
         this.#operator = operator;
-        console.log(this.#operator);
         return true;
     }
 
@@ -111,13 +110,11 @@ class Calculator {
         if (this.#operator === null) {
             if (hasDecimalAlready(this.#leftOperand)) return false;
             this.#leftOperand = concatNumberToOperand(this.#leftOperand);
-            console.log(this.#leftOperand);
             return this.#leftOperand;
         }
 
         if (hasDecimalAlready(this.#rightOperand)) return false;
         this.#rightOperand = concatNumberToOperand(this.#rightOperand);
-        console.log(this.#rightOperand);
         return this.#rightOperand;
     }
 
@@ -128,7 +125,9 @@ class Calculator {
      * Returns the result of the operation if all required values are present,
      * otherwise returns false.
      * 
-     * After evaluation, resets the operands and operator to null.
+     * After evaluation, resets the right operand and operator to null.
+     * 
+     * Left operand becomes the result.
      * 
      * @returns {number|false} The result of the calculation, or false if evaluation
      *                        could not be performed due to missing operands/operator.
@@ -139,18 +138,15 @@ class Calculator {
             this.#operator === null
         ) return false;
 
-        const result = this.#funcs[this.#operator](parseFloat(this.#leftOperand), parseFloat(this.#rightOperand)).toFixed(2).toString();
-        console.log(result);
-        this.#leftOperand = null;
+        const rawResult = this.#funcs[this.#operator](parseFloat(this.#leftOperand), parseFloat(this.#rightOperand));
+        const result = Number.isInteger(rawResult) ? rawResult.toString() : rawResult.toFixed(2);
+        this.#leftOperand = result;
         this.#rightOperand = null;
         this.#operator = null;
         return result;
     }
 }
 
-console.log(calculator);
 const calculatorState = new Calculator();
-
-
-//document.addEventListener('keydown', (event) => console.log(event.key))
 initLayout();
+//document.addEventListener('keydown', (event) => console.log(event.key))
