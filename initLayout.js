@@ -23,28 +23,30 @@ function initLayout() {
     const onButtonPresses = {
         onACPress : (_) => {
             calculatorState.onAllClear();
-            updateDisplay(" ");
+            updateDisplay();
         },
 
         onDELPress: (_) => {
-                        
-            updateDisplay(calculatorState.onDelete());
+            calculatorState.onDelete() 
+            updateDisplay();
         },
 
         onOperatorPress: (event) => {
             const operator = event.target.textContent;
             if (operator === '=') {
-                updateDisplay(calculatorState.onEvaluate());
+                calculatorState.onEvaluate()
+                updateDisplay();
                 return;
             }
             
-            const value = calculatorState.onOperator(event.target.textContent);
-            typeof value === 'string' ? updateDisplay(value) : updateDisplay(" ")
+            calculatorState.onOperator(event.target.textContent);
+            updateDisplay();
 
         },
 
         onNumericPress: (event) => {
-            updateDisplay(calculatorState.onNumericBtnPress(event.target.textContent));
+            calculatorState.onNumericBtnPress(event.target.textContent)
+            updateDisplay();
         }
 
     }
@@ -95,13 +97,10 @@ function initLayout() {
 }
 
 
-function updateDisplay(value) {
-    if (!value && value !== "") return;
+function updateDisplay() {
     const display = document.querySelector(".display");
-    display.textContent = value;
+    display.textContent = calculatorState.getDisplayValue();
 }
-
-
 
 const calculatorState = new Calculator();
 initLayout();
