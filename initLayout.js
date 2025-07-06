@@ -12,10 +12,10 @@ function initLayout() {
     const numericalValues = "0123456789".split('');
 
     document.addEventListener('keydown', (event) => {
-        const key = event.key;
+        const key = event.key === "Enter" ? "=" : event.key;
         const customEvent = {target: {textContent: key}}
         if (numericalValues.includes(key)) onButtonPresses.onNumericPress(customEvent);
-        else if (operators.includes(key) || key === "Enter")  onButtonPresses.onOperatorPress(customEvent);
+        else if (operators.includes(key))  onButtonPresses.onOperatorPress(customEvent);
         else if (key === "Backspace")      onButtonPresses.onDELPress(_);
     })
 
