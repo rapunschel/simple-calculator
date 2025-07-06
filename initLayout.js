@@ -9,7 +9,17 @@ function initLayout() {
                     ['.',0, '=', '+']];
     const operators = "/+-*=".split('');
     const undoOperators = "AC DEL".split(' ');
+    const numericalValues = "0123456789".split('');
 
+    document.addEventListener('keydown', (event) => {
+        const key = event.key;
+        const customEvent = {target: {textContent: key}}
+        if (numericalValues.includes(key)) onButtonPresses.onNumericPress(customEvent);
+        else if (operators.includes(key) || key === "Enter")  onButtonPresses.onOperatorPress(customEvent);
+        else if (key === "Backspace")      onButtonPresses.onDELPress(_);
+    })
+
+    
     const onButtonPresses = {
         onACPress : (_) => {
             calculatorState.onAllClear();
@@ -60,13 +70,13 @@ function initLayout() {
             }
             if (undoOperators.includes(btn)) {
                 if (btn === "AC") {
-                    button.classList.add("undo-btn");  
                     button.addEventListener('click', onButtonPresses.onACPress)
                 }
 
                 else if(btn === 'DEL') {
                     button.addEventListener('click', onButtonPresses.onDELPress)
                 }
+                button.classList.add("undo-btn");  
 
                 return;
             }
@@ -95,5 +105,3 @@ function updateDisplay(value) {
 
 const calculatorState = new Calculator();
 initLayout();
-
-//document.addEventListener('keydown', (event) => console.log(event.key))
