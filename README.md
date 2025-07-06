@@ -2,7 +2,7 @@
 A simple calculator built to practice DOM manipulation and modular javascript.
 The layout is generated dynamically with javascript, and the app is structured with a clear separation between display logic and calculator functionality.
 
-## Functionalities.
+## Features
 - Keyboard input support (numbers, operators, enter, backspace)
 - Basic arithmetic operations:
     - Addition
